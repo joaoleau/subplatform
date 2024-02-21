@@ -3,10 +3,7 @@ from django.http.request import HttpRequest
 from django.http.response import HttpResponse
 from django.shortcuts import redirect
 from django.contrib.auth import login, logout, authenticate
-from django.views.generic import (
-    TemplateView, 
-    FormView
-)
+from django.views.generic import TemplateView, FormView
 from django.views import View
 from .forms import RegisterForm, LoginForm
 from django.urls import reverse_lazy
@@ -29,7 +26,7 @@ class LoginView(FormView):
 
     def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
         if request.user.is_authenticated:
-            return redirect('account:home')
+            return redirect("account:home")
         return super().get(request, *args, **kwargs)
 
     def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
@@ -45,11 +42,13 @@ class LoginView(FormView):
                 login(request, user)
                 return redirect("account:home")
 
-        return self.render_to_response(self.get_context_data(error="Credenciais inválidas"))
+        return self.render_to_response(
+            self.get_context_data(error="Credenciais inválidas")
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = self.form_class()
+        context["form"] = self.form_class()
         return context
 
 
@@ -75,14 +74,14 @@ class RegisterView(FormView):
                 user.save()
                 return self.form_valid(form)
             else:
-                form.add_error('password', 'Senhas diferentes.')
+                form.add_error("password", "Senhas diferentes.")
                 return self.form_invalid(form)
 
         return self.render_to_response(self.get_context_data())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = self.form_class()
+        context["form"] = self.form_class()
         return context
 
 

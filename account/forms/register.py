@@ -12,5 +12,4 @@ class RegisterForm(UserCreationForm):
             "password1",
             "password2",
             "is_writer",
-
         ]
