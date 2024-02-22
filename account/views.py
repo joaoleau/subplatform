@@ -11,13 +11,14 @@ from django.urls import reverse_lazy
 
 class HomeView(TemplateView):
     template_name = "account/index.html"
-
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        return super().get_context_data(**kwargs)
-
-    def get(self, request: HttpRequest, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        return self.render_to_response(context)
+    
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if not request.user.is_authenticated:
+            return super().get(request, *args, **kwargs)
+        if request.user.is_writer:
+            return redirect("writer:writer-dashboard")
+        else:
+            return redirect("client:client-dashboard")
 
 
 class LoginView(FormView):
@@ -40,7 +41,9 @@ class LoginView(FormView):
                 if not request.POST.get("remember_me", None):
                     request.session.set_expiry(0)
                 login(request, user)
-                return redirect("account:home")
+                if user.is_writer == True:
+                    return redirect("writer:writer-dashboard")
+                return redirect("client:client-dashboard")
 
         return self.render_to_response(
             self.get_context_data(error="Credenciais inválidas")
@@ -59,6 +62,8 @@ class RegisterView(FormView):
     success_message = "Novo usuário <b>%(username)s</b> criado com sucesso."
 
     def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
+        if request.user.is_authenticated:
+            return redirect("account:home")
         return self.render_to_response(self.get_context_data())
 
     def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
