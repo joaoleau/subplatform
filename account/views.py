@@ -6,12 +6,14 @@ from django.http.response import HttpResponse
 from django.shortcuts import redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth import get_user_model
-from django.views.generic import TemplateView, FormView, UpdateView
+from django.views.generic import TemplateView, FormView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
-from .forms import RegisterForm, LoginForm
+from .forms import RegisterForm, LoginForm, UpdateUserForm
 from django.urls import reverse_lazy
 
 User = get_user_model()
+
 
 class HomeView(TemplateView):
     template_name = "account/index.html"
@@ -94,19 +96,33 @@ class RegisterView(FormView):
         return context
 
 
-class LogoutView(View):
+class LogoutView(LoginRequiredMixin, View):
 
     def get(self, request):
         logout(request)
         return redirect("account:home")
 
 
-class AccountManagement(UpdateView):
-    template_name = "writer/article-detail.html"
+class AccountManagement(LoginRequiredMixin, UpdateView):
+    template_name = "account/update.html"
     model = User
-    context_object_name = "user"
-    pk_url_kwarg = "pk"
+    form_class = UpdateUserForm
+    context_object_name = "form"
+    success_url = reverse_lazy("account:home")
+
 
     def get_object(self, queryset: QuerySet[Any] | None = ...) -> Model:
         return self.get_queryset().get(pk=self.request.user.id)
-    
+
+
+class DeleteAccountView(LoginRequiredMixin, DeleteView):
+    model = User
+    template_name = "account/account-confirm-delete.html"
+
+    def get_object(self, queryset: QuerySet[Any] | None = ...) -> Model:
+        return self.get_queryset().get(pk=self.request.user.id)
+
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["user"] = self.get_object()
+        return context
