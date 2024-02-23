@@ -10,6 +10,6 @@ def truncate_words(value, arg):
     length = int(arg)
     words = value.split()
     if len(words) > length:
-        return ' '.join(words[:length]) + ' ...'
+        return " ".join(words[:length]) + " ..."
     else:
         return value

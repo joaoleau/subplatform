@@ -21,7 +21,7 @@ INSTALLED_APPS = [
     "crispy_bootstrap5",
     "account",
     "client",
-    "writer"
+    "writer",
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
@@ -94,4 +94,4 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-LOGIN_URL="account:login"
+LOGIN_URL = "account:login"

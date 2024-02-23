@@ -1,17 +1,21 @@
 from typing import Any
+from django.db.models.base import Model as Model
+from django.db.models.query import QuerySet
 from django.http.request import HttpRequest
 from django.http.response import HttpResponse
 from django.shortcuts import redirect
 from django.contrib.auth import login, logout, authenticate
-from django.views.generic import TemplateView, FormView
+from django.contrib.auth import get_user_model
+from django.views.generic import TemplateView, FormView, UpdateView
 from django.views import View
 from .forms import RegisterForm, LoginForm
 from django.urls import reverse_lazy
 
+User = get_user_model()
 
 class HomeView(TemplateView):
     template_name = "account/index.html"
-    
+
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         if not request.user.is_authenticated:
             return super().get(request, *args, **kwargs)
@@ -95,3 +99,14 @@ class LogoutView(View):
     def get(self, request):
         logout(request)
         return redirect("account:home")
+
+
+class AccountManagement(UpdateView):
+    template_name = "writer/article-detail.html"
+    model = User
+    context_object_name = "user"
+    pk_url_kwarg = "pk"
+
+    def get_object(self, queryset: QuerySet[Any] | None = ...) -> Model:
+        return self.get_queryset().get(pk=self.request.user.id)
+    

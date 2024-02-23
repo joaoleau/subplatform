@@ -4,7 +4,6 @@
 
 {% block content %}
 <div class="flex-container text-center p-5">
-    <br><br>
     <h5>✍️ {{user.first_name}} | {{verbose_name_plural}} </h5>
 
     <span class="pull-right">{{ object_list.count }}
@@ -24,7 +23,11 @@
             <br><br>
             {{article.date_posted}}
             <br><br>
-            <a class="btn btn-success" href="{{ article.get_absolute_url }}">Leia mais</a>
+            <a class="btn btn-success" href="{{ article.get_absolute_url }}">Read more</a>
+            <br><br>
+            <a href=" {% url 'writer:article-update' article.id %}">Update</a>
+            |
+            <a href=" {% url 'writer:article-delete' article.id %}">Delete</a>
         </div>
         {% endfor %}
     </div>

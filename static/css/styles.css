@@ -1,8 +1,12 @@
 body {
-    background-color: #f0f0f0;
+    background-color: #e8e8e8;
 }
 
 .form-layout {
     width: 500px;
     border-radius: 20px;
+}
+
+.form-check input {
+    border: 2px solid black;
 }
