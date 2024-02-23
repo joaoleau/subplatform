@@ -1,6 +1,6 @@
 from typing import Any
 from django.db.models.query import QuerySet
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.views.generic import (
     TemplateView,
     CreateView,
@@ -24,8 +24,11 @@ class CreateArticleView(WriterPermissionMixin, CreateView):
     form_class = ArticleForm
     context_object_name = "form"
 
-    def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
-        return super().post(request, *args, **kwargs)
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.user = self.request.user
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class MyArticlesView(WriterPermissionMixin, ListView):
@@ -56,6 +59,7 @@ class UpdateArticleView(AuthorPermissionMixin, UpdateView):
     pk_url_kwarg = "pk"
 
 
+
 class DeleteArticleView(AuthorPermissionMixin, DeleteView):
     model = Article
     pk_url_kwarg = "pk"
@@ -65,7 +69,7 @@ class DeleteArticleView(AuthorPermissionMixin, DeleteView):
         context = super().get_context_data(**kwargs)
         context["article"] = self.get_object()
         return context
-    
+
 
 class ListArticleView(WriterPermissionMixin, ListView):
     template_name = "writer/list-article.html"
