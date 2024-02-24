@@ -1,6 +1,6 @@
 from typing import Any
 from django.db.models.query import QuerySet
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpRequest
 from django.views.generic import (
     TemplateView,
     CreateView,
@@ -9,7 +9,6 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
 )
-from django.urls import reverse_lazy
 from .mixins import AuthorPermissionMixin, WriterPermissionMixin
 from .forms import ArticleForm
 from .models import Article
@@ -59,7 +58,6 @@ class UpdateArticleView(AuthorPermissionMixin, UpdateView):
     pk_url_kwarg = "pk"
 
 
-
 class DeleteArticleView(AuthorPermissionMixin, DeleteView):
     model = Article
     pk_url_kwarg = "pk"
@@ -68,22 +66,6 @@ class DeleteArticleView(AuthorPermissionMixin, DeleteView):
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["article"] = self.get_object()
-        return context
-
-
-class ListArticleView(WriterPermissionMixin, ListView):
-    template_name = "writer/list-article.html"
-    context_object_name = "article_list"
-    model = Article
-
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        context.update(
-            {
-                "verbose_name": self.model._meta.verbose_name.title(),
-                "verbose_name_plural": self.model._meta.verbose_name_plural.title(),
-            }
-        )
         return context
 
 
