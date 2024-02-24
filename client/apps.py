@@ -8,7 +8,7 @@ def start_create_plans(sender, **kwargs):
     if not PlanModel.objects.all().exists():
         PlanModel.objects.create(name="Free", cost=0)
         PlanModel.objects.create(name="Standard", cost=5)
-        PlanModel.objects.create(name="Standard", cost=10)
+        PlanModel.objects.create(name="Premium", cost=10)
 
 
 class ClientConfig(AppConfig):

@@ -22,10 +22,12 @@
             <br><br>
             {{article.date_posted}}
             <br><br>
-            {% if article.is_premium == True %}
-                ⭐️<strong>Premium</strong>
-            {% elif article.is_premium == False %}
-                <strong>Standard</strong>
+            ✍️ Author - {{ article.user.get_full_name }}
+            <br><br>
+            {% if article.get_access_level == 'Premium' %}
+            ⭐️<strong>Premium</strong>
+            {% elif article.get_access_level == 'Standard' %}
+            <strong>Standard</strong>
             {% endif %}
             <br><br>
             <a class="btn btn-success" href="{{ article.get_absolute_url }}">Read more</a>

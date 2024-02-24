@@ -13,13 +13,11 @@ from .mixins import AuthorPermissionMixin
 from .forms import ArticleForm
 from .models import Article
 from django.urls import reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin
-from article.models import Article
 from django.contrib.auth import get_user_model
 from django.shortcuts import redirect
 from client.mixins import SubscriptionPermissionMixin
-from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse
+
 
 class CreateArticleView(LoginRequiredMixin, CreateView):
     template_name = "article/article-create.html"
@@ -81,7 +79,7 @@ class DetailArticleView(AuthorPermissionMixin, DetailView):
 
 
 class ListArticleView(SubscriptionPermissionMixin, ListView):
-    template_name = "client/list-article.html"
+    template_name = "article/article-list.html"
     context_object_name = "article_list"
     model = Article
 
@@ -109,16 +107,11 @@ class ListArticleView(SubscriptionPermissionMixin, ListView):
 
     def get_queryset(self) -> QuerySet[Any] | None:
         user = self.get_user_request()
+        plan, is_active = user.subscription.get_plan_and_is_active()
+        if is_active:
+            if plan.name == "Standard":
+                return self.model.objects.public_articles().standard()
 
-        if user.get_subscription():
-            plan, is_active = user.subscription.get_plan_and_is_active()
-
-            if is_active is False:
-                self.model.objects.none()
-
-            elif plan == "Standard":
-                return super().get_queryset().filter(is_premium=False)
-
-            return super().get_queryset()
+            return self.model.objects.public_articles()
 
         return self.model.objects.none()

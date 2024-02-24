@@ -2,12 +2,14 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
+from .managers import ArticleManager
 
 
 class RoleChoices(models.TextChoices):
     FREE = "Free", "free"
     STANDARD = "Standard", "standard"
     PREMIUM = "Premium", "premium"
+    PRIVATE = "Private", "private"
 
 
 class Article(models.Model):
@@ -20,6 +22,8 @@ class Article(models.Model):
     user = models.ForeignKey(
         get_user_model(), max_length=10, on_delete=models.CASCADE, null=True
     )
+
+    objects = ArticleManager()
 
     class Meta:
         verbose_name = _("Article")
