@@ -47,7 +47,7 @@ class LoginView(FormView):
                 if not request.POST.get("remember_me", None):
                     request.session.set_expiry(0)
                 login(request, user)
-                if user.is_writer == True:
+                if user.is_writer:
                     return redirect("writer:writer-dashboard")
                 return redirect("client:client-dashboard")
 
@@ -109,7 +109,6 @@ class AccountManagement(LoginRequiredMixin, UpdateView):
     form_class = UpdateUserForm
     context_object_name = "form"
     success_url = reverse_lazy("account:home")
-
 
     def get_object(self, queryset: QuerySet[Any] | None = ...) -> Model:
         return self.get_queryset().get(pk=self.request.user.id)
