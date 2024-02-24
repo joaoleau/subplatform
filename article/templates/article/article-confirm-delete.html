@@ -1,4 +1,4 @@
-{% extends 'writer/navbar.html' %}
+{% extends 'navbar.html' %}
 {% load static %}
 {% load custom_filters %}
 {% block content %}
@@ -19,7 +19,7 @@
             {% csrf_token %}
             <input class="btn btn-danger" type="submit" value="Delete Article" />
         </form>
-        <a href="{% url 'writer:my-articles' %}">Return to articles</a>
+        <a href="{% url 'article:my-articles' %}">Return to articles</a>
     </div>
 </div>
 {% endblock %}

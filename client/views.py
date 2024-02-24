@@ -9,10 +9,6 @@ from django.shortcuts import redirect
 from .mixins import NotIsactiveSubscriptionPermissionMixin
 
 
-class DashboardView(LoginRequiredMixin, TemplateView):
-    template_name = "client/client-dashboard.html"
-
-
 class SubscriptionLockedView(NotIsactiveSubscriptionPermissionMixin, TemplateView):
     template_name = "client/subscription-locked.html"
 

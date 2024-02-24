@@ -20,7 +20,7 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_bootstrap5",
     "account",
-    "client",
+    "client.apps.ClientConfig",
     "article",
 ]
 
@@ -44,7 +44,7 @@ ROOT_URLCONF = "subplatform.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [

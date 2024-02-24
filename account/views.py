@@ -6,7 +6,7 @@ from django.http.response import HttpResponse
 from django.shortcuts import redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth import get_user_model
-from django.views.generic import TemplateView, FormView, UpdateView, DeleteView
+from django.views.generic import FormView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from .forms import RegisterForm, LoginForm, UpdateUserForm
@@ -15,25 +15,13 @@ from django.urls import reverse_lazy
 User = get_user_model()
 
 
-class HomeView(TemplateView):
-    template_name = "account/index.html"
-
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if not request.user.is_authenticated:
-            return super().get(request, *args, **kwargs)
-        if request.user.is_writer:
-            return redirect("writer:writer-dashboard")
-        else:
-            return redirect("client:client-dashboard")
-
-
 class LoginView(FormView):
     template_name = "account/login.html"
     form_class = LoginForm
 
     def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
         if request.user.is_authenticated:
-            return redirect("account:home")
+            return redirect("home")
         return super().get(request, *args, **kwargs)
 
     def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
@@ -47,9 +35,8 @@ class LoginView(FormView):
                 if not request.POST.get("remember_me", None):
                     request.session.set_expiry(0)
                 login(request, user)
-                if user.is_writer:
-                    return redirect("writer:writer-dashboard")
-                return redirect("client:client-dashboard")
+
+                return redirect("home")
 
         return self.render_to_response(
             self.get_context_data(error="Credenciais inválidas")
@@ -69,7 +56,7 @@ class RegisterView(FormView):
 
     def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
         if request.user.is_authenticated:
-            return redirect("account:home")
+            return redirect("home")
         return self.render_to_response(self.get_context_data())
 
     def post(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
@@ -100,7 +87,7 @@ class LogoutView(LoginRequiredMixin, View):
 
     def get(self, request):
         logout(request)
-        return redirect("account:home")
+        return redirect("home")
 
 
 class AccountManagement(LoginRequiredMixin, UpdateView):
@@ -108,7 +95,7 @@ class AccountManagement(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UpdateUserForm
     context_object_name = "form"
-    success_url = reverse_lazy("account:home")
+    success_url = reverse_lazy("home")
 
     def get_object(self, queryset: QuerySet[Any] | None = ...) -> Model:
         return self.get_queryset().get(pk=self.request.user.id)
@@ -117,6 +104,7 @@ class AccountManagement(LoginRequiredMixin, UpdateView):
 class DeleteAccountView(LoginRequiredMixin, DeleteView):
     model = User
     template_name = "account/account-confirm-delete.html"
+    success_url = reverse_lazy("home")
 
     def get_object(self, queryset: QuerySet[Any] | None = ...) -> Model:
         return self.get_queryset().get(pk=self.request.user.id)

@@ -1,6 +1,5 @@
 from django.urls import path
 from .views import (
-    DashboardView,
     CreateArticleView,
     DetailArticleView,
     MyArticlesView,
@@ -11,7 +10,6 @@ from .views import (
 app_name = "article"
 
 urlpatterns = [
-    path("dashboard/", DashboardView.as_view(), name="writer-dashboard"),
     path("article/create/", CreateArticleView.as_view(), name="article-create"),
     path("article/<int:pk>/", DetailArticleView.as_view(), name="article-detail"),
     path(

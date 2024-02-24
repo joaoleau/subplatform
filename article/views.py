@@ -1,24 +1,21 @@
 from typing import Any
 from django.db.models.query import QuerySet
-from django.http import HttpResponseRedirect, HttpRequest
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseRedirect
 from django.views.generic import (
-    TemplateView,
     CreateView,
     ListView,
     DetailView,
     UpdateView,
     DeleteView,
 )
-from .mixins import AuthorPermissionMixin, WriterPermissionMixin
+from .mixins import AuthorPermissionMixin
 from .forms import ArticleForm
 from .models import Article
+from django.urls import reverse_lazy
 
 
-class DashboardView(WriterPermissionMixin, TemplateView):
-    template_name = "article/writer-dashboard.html"
-
-
-class CreateArticleView(WriterPermissionMixin, CreateView):
+class CreateArticleView(LoginRequiredMixin, CreateView):
     template_name = "article/article-create.html"
     form_class = ArticleForm
     context_object_name = "form"
@@ -30,7 +27,7 @@ class CreateArticleView(WriterPermissionMixin, CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class MyArticlesView(WriterPermissionMixin, ListView):
+class MyArticlesView(LoginRequiredMixin, ListView):
     template_name = "article/my-articles.html"
     context_object_name = "article_list"
     model = Article
@@ -62,6 +59,7 @@ class DeleteArticleView(AuthorPermissionMixin, DeleteView):
     model = Article
     pk_url_kwarg = "pk"
     template_name = "article/article-confirm-delete.html"
+    success_url = reverse_lazy("article:my-articles")
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -69,7 +67,7 @@ class DeleteArticleView(AuthorPermissionMixin, DeleteView):
         return context
 
 
-class DetailArticleView(WriterPermissionMixin, DetailView):
+class DetailArticleView(AuthorPermissionMixin, DetailView):
     template_name = "article/article-detail.html"
     model = Article
     context_object_name = "article"

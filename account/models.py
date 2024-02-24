@@ -23,10 +23,16 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.email
 
     def get_subscription(self):
-        try:
-            return self.subscription
-        except:
-            return None
+        return self.subscription
 
     def get_full_name(self) -> str:
         return f"{self.first_name} {self.last_name}"
+
+    def is_sub(self) -> bool:
+        sub = self.get_subscription()
+        plan, active = sub.get_plan_and_is_active()
+
+        if active and plan.name != "Free":
+            return True
+
+        return False

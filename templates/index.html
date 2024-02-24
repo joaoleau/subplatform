@@ -1,0 +1,34 @@
+{% extends 'navbar.html' %}
+{% load static %}
+{% block content %}
+    <html>
+        <body>
+            <br>
+            <br>
+
+            <div class="text-center">
+                <h5> Edenthought.... Subscribe for the most informative articles on the net! </h5>
+
+                <br>
+
+                <p> Browse through our extensive collection of carefully curated content. </p>
+                <br>
+                <a class="btn btn-success" type="button" href="{% url 'home' %}"> <i class="fa fa-angle-right"
+                        aria-hidden="true"></i> &nbsp; Get started today</a>
+            </div>
+
+
+        </body>
+
+
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+            integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous">
+            </script>
+
+        <script src="{% static '' %}"></script>
+
+    </html>
+{% endblock %}
