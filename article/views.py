@@ -15,11 +15,11 @@ from .models import Article
 
 
 class DashboardView(WriterPermissionMixin, TemplateView):
-    template_name = "writer/writer-dashboard.html"
+    template_name = "article/writer-dashboard.html"
 
 
 class CreateArticleView(WriterPermissionMixin, CreateView):
-    template_name = "writer/create-article.html"
+    template_name = "article/article-create.html"
     form_class = ArticleForm
     context_object_name = "form"
 
@@ -31,7 +31,7 @@ class CreateArticleView(WriterPermissionMixin, CreateView):
 
 
 class MyArticlesView(WriterPermissionMixin, ListView):
-    template_name = "writer/my-articles.html"
+    template_name = "article/my-articles.html"
     context_object_name = "article_list"
     model = Article
 
@@ -51,7 +51,7 @@ class MyArticlesView(WriterPermissionMixin, ListView):
 
 
 class UpdateArticleView(AuthorPermissionMixin, UpdateView):
-    template_name = "writer/update-article.html"
+    template_name = "article/article-update.html"
     model = Article
     form_class = ArticleForm
     context_object_name = "article"
@@ -61,7 +61,7 @@ class UpdateArticleView(AuthorPermissionMixin, UpdateView):
 class DeleteArticleView(AuthorPermissionMixin, DeleteView):
     model = Article
     pk_url_kwarg = "pk"
-    template_name = "writer/article-confirm-delete.html"
+    template_name = "article/article-confirm-delete.html"
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -70,7 +70,7 @@ class DeleteArticleView(AuthorPermissionMixin, DeleteView):
 
 
 class DetailArticleView(WriterPermissionMixin, DetailView):
-    template_name = "writer/article-detail.html"
+    template_name = "article/article-detail.html"
     model = Article
     context_object_name = "article"
     pk_url_kwarg = "pk"
