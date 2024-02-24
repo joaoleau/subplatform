@@ -2,7 +2,7 @@ from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.views.generic import TemplateView, ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from writer.models import Article
+from article.models import Article
 from typing import Any
 from django.contrib.auth import get_user_model
 from django.shortcuts import redirect
