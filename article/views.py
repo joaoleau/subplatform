@@ -71,7 +71,7 @@ class DeleteArticleView(AuthorPermissionMixin, DeleteView):
         return context
 
 
-class DetailArticleView(AuthorPermissionMixin, DetailView):
+class DetailArticleView(LoginRequiredMixin, DetailView):
     template_name = "article/article-detail.html"
     model = Article
     context_object_name = "article"
