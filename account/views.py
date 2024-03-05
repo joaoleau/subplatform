@@ -97,6 +97,11 @@ class AccountManagement(LoginRequiredMixin, UpdateView):
     context_object_name = "form"
     success_url = reverse_lazy("home")
 
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["user"] = self.get_object()
+        return context
+
     def get_object(self, queryset: QuerySet[Any] | None = ...) -> Model:
         return self.get_queryset().get(pk=self.request.user.id)
 

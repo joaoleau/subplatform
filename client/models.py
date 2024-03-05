@@ -10,21 +10,21 @@ User = get_user_model()
 
 class PlanModel(models.Model):
     name = models.CharField(_("Plan Name"), max_length=20)
-    cost = models.PositiveIntegerField()
+    cost = models.PositiveIntegerField(_("Cost"))
 
     def __str__(self) -> str:
         return f"{self.name}:{self.cost}"
 
     def get_plan_and_cost(self):
-        return self.name, self.cost
+        return self.name
 
 
 class Subscription(models.Model):
     plan = models.ForeignKey(
         PlanModel, on_delete=models.SET_NULL, null=True, related_name="subscriptions"
     )
-    paypal_subscription_id = models.CharField(max_length=300)
     is_active = models.BooleanField(default=False)
+    paypal_subscription_id = models.CharField(_("SubID"), max_length=300, default="XXX-XXX-XXX") #Implementar Default Para Free
     user = models.OneToOneField(
         User,
         max_length=10,

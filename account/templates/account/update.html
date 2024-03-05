@@ -16,4 +16,37 @@
         <a class="btn btn-outline-danger" href="{% url 'account:account-delete' %}">Delete</a>
     </form>
 </div>
+<br>
+<div class="container gb-white shadow-md p-5 text-center">
+    <h5>Browse subscription plans</h5>
+    <hr>
+    <p>Check all the available subscription plans:</p>
+    <br>
+    <a class="btn btn-success" href="{% url 'client:subscription-plans' %}">&nbsp;View Subscription Plans</a>
+</div>
+
+<h3 class="text-center">Subscription Infos</h3>
+{% if user.is_sub %}
+    <div class="container gb-white shadow-md p-5 text-center">
+        <h5>Delete your subscription</h5>
+        <hr>
+        <p>Permanently delete your subscription by clicking the button below:</p>
+        <br>
+        <a class="btn btn-danger"
+            href="{% url 'client:delete-subscription' user.subscription.paypal_subscription_id %}">&nbsp;Delete Subscription</a>
+    </div>
+
+    <div class="container gb-white shadow-md p-5 text-center">
+        <h5>Update your subscription</h5>
+        <hr>
+        <p>Upgrade or downgrade your subscription by clicking the button below:</p>
+        <br>
+        <a class="btn btn-info"
+            href="{% url 'client:update-subscription' user.subscription.paypal_subscription_id %}">&nbsp;Update Subscription</a>
+    </div>
+{% else %}
+    <p class="text-center">You do not have a subscription plan</p>
+{% endif %}
+
+<br><br>
 {% endblock %}
