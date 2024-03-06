@@ -17,7 +17,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="planmodel",
             name="paypal_subscription_id",
-            field=models.CharField(default='null', max_length=300, verbose_name="SubID"),
+            field=models.CharField(
+                default="null", max_length=300, verbose_name="SubID"
+            ),
             preserve_default=False,
         ),
         migrations.AlterField(

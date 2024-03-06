@@ -6,7 +6,7 @@ from .views import (
     DeleteSubscription,
     UpdateSubscription,
     PaypalUpdateSubConfirmed,
-    DjangoUpdateSubConfirmed
+    DjangoUpdateSubConfirmed,
 )
 
 app_name = "client"

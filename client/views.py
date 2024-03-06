@@ -7,7 +7,12 @@ from .mixins import NotIsactiveSubscriptionPermissionMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import get_user_model
 from .models import PlanModel
-from .paypal import *
+from .paypal import (
+    get_access_token_paypal,
+    cancel_subscription_paypal,
+    update_subscription_paypal,
+    get_current_subscription,
+)
 from .services import ClientServices
 
 
@@ -26,8 +31,7 @@ class CreateSubscriptionView(LoginRequiredMixin, TemplateView):
         plan_name = self.kwargs.get("plan")
 
         self.user_object.subscription.plan = self.services.get_plan(plan_name)
-        self.user_object.subscription.paypal_subscription_id = self.kwargs.get(
-            "subID")
+        self.user_object.subscription.paypal_subscription_id = self.kwargs.get("subID")
         self.user_object.subscription.save()
 
         return super().get(request, *args, **kwargs)
@@ -61,8 +65,7 @@ class UpdateSubscription(LoginRequiredMixin, View):
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         subID = kwargs.get("subID")
 
-        approve_link = update_subscription_paypal(
-            self.access_token, subID)
+        approve_link = update_subscription_paypal(self.access_token, subID)
 
         if approve_link:
             return redirect(approve_link)
@@ -90,7 +93,8 @@ class DjangoUpdateSubConfirmed(LoginRequiredMixin, TemplateView):
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         subID = kwargs.get("subID")
         self.user_object_with_subid = get_user_model().objects.get(
-            subscription__paypal_subscription_id=subID)
+            subscription__paypal_subscription_id=subID
+        )
 
         current_plan_id = get_current_subscription(self.access_token, subID)
 

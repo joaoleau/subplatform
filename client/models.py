@@ -24,7 +24,9 @@ class Subscription(models.Model):
         PlanModel, on_delete=models.SET_NULL, null=True, related_name="subscriptions"
     )
     is_active = models.BooleanField(default=False)
-    paypal_subscription_id = models.CharField(_("SubID"), max_length=300, default="XXX-XXX-XXX") #Implementar Default Para Free
+    paypal_subscription_id = models.CharField(
+        _("SubID"), max_length=300, default="XXX-XXX-XXX"
+    )  # Implementar Default Para Free
     user = models.OneToOneField(
         User,
         max_length=10,
