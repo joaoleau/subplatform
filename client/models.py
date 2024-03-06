@@ -13,7 +13,7 @@ class PlanModel(models.Model):
     cost = models.PositiveIntegerField(_("Cost"))
 
     def __str__(self) -> str:
-        return f"{self.name}:{self.cost}"
+        return f"{self.name}"
 
     def get_plan_and_cost(self):
         return self.name
@@ -42,7 +42,7 @@ class Subscription(models.Model):
         return self.plan, self.is_active
 
     def __str__(self) -> str:
-        return f"{self.user.get_full_name()} - {self.plan}"
+        return f"{self.plan}"
 
 
 @receiver(post_save, sender=User)

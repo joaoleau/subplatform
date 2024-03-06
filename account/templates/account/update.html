@@ -32,7 +32,7 @@
         <hr>
         <p>Permanently delete your subscription by clicking the button below:</p>
         <br>
-        <a class="btn btn-danger"
+        <a id="deleteButton" class="btn btn-danger"
             href="{% url 'client:delete-subscription' user.subscription.paypal_subscription_id %}">&nbsp;Delete Subscription</a>
     </div>
 
@@ -41,7 +41,7 @@
         <hr>
         <p>Upgrade or downgrade your subscription by clicking the button below:</p>
         <br>
-        <a class="btn btn-info"
+        <a id="updateButton" class="btn btn-info"
             href="{% url 'client:update-subscription' user.subscription.paypal_subscription_id %}">&nbsp;Update Subscription</a>
     </div>
 {% else %}
@@ -49,4 +49,32 @@
 {% endif %}
 
 <br><br>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+
+            $("#deleteButton").on("click", function () {
+
+                $(this).text("Processing...");
+
+
+            });
+            
+        });
+
+
+        $(document).ready(function () {
+
+            $("#updateButton").on("click", function () {
+
+                $(this).text("Processing...");
+
+
+            });
+
+        });
+</script>
 {% endblock %}

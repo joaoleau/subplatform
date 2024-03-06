@@ -22,7 +22,7 @@ class CreateSubscriptionView(LoginRequiredMixin, TemplateView):
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         self.user_object = self.request.user
-        
+
         plan_name = self.kwargs.get("plan")
 
         self.user_object.subscription.plan = self.services.get_plan(plan_name)
@@ -52,17 +52,12 @@ class DeleteSubscription(LoginRequiredMixin, TemplateView):
 class SubscriptionPlansView(LoginRequiredMixin, TemplateView):
     template_name = "client/subscription-plans.html"
     model = PlanModel
-    extra_context = None
 
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if self.request.user.is_sub():
-            self.extra_context = {"user":self.request.user}
-        return super().get(request, *args, **kwargs)
 
 class UpdateSubscription(LoginRequiredMixin, View):
     services = ClientServices()
     access_token = get_access_token_paypal()
-    
+
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         subID = kwargs.get("subID")
 

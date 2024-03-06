@@ -28,7 +28,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     def is_sub(self) -> bool:
         sub = self.subscription
         plan, active = sub.get_plan_and_is_active()
-
         if active and plan.name != "Free":
             return True
 
