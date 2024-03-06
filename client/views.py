@@ -20,15 +20,9 @@ class CreateSubscriptionView(LoginRequiredMixin, TemplateView):
     template_name = "client/create-subscription.html"
     services = ClientServices()
 
-    # #Ver depois "sub" nao uso
-
-    # def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-    #     context = super().get_context_data(**kwargs)
-    #     context["sub"] = self.user_object.subscription
-    #     return context
-
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         self.user_object = self.request.user
+        
         plan_name = self.kwargs.get("plan")
 
         self.user_object.subscription.plan = self.services.get_plan(plan_name)
@@ -58,26 +52,22 @@ class DeleteSubscription(LoginRequiredMixin, TemplateView):
 class SubscriptionPlansView(LoginRequiredMixin, TemplateView):
     template_name = "client/subscription-plans.html"
     model = PlanModel
-    # context_object_name = "plans"
+    extra_context = None
 
-    # def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-    #     context = super().get_context_data(**kwargs)
-    #     context[self.context_object_name] = self.get_queryset()
-    #     return context
-
-    # def get_queryset(self):
-    #     return self.model.objects.all()
-
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        if self.request.user.is_sub():
+            self.extra_context = {"user":self.request.user}
+        return super().get(request, *args, **kwargs)
 
 class UpdateSubscription(LoginRequiredMixin, View):
     services = ClientServices()
-
+    access_token = get_access_token_paypal()
+    
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         subID = kwargs.get("subID")
-        access_token = get_access_token_paypal()
 
         approve_link = update_subscription_paypal(
-            access_token, subID)
+            self.access_token, subID)
 
         if approve_link:
             return redirect(approve_link)
@@ -109,7 +99,7 @@ class DjangoUpdateSubConfirmed(LoginRequiredMixin, TemplateView):
 
         current_plan_id = get_current_subscription(self.access_token, subID)
 
-        if current_plan_id == "P-37W71531BU030260RMXN7HKY":
+        if current_plan_id == "P-79F92206JA736893VMXONXHI":
             new_plan = self.services.get_plan("Standard")
             self.user_object_with_subid.subscription.update(plan=new_plan)
 
