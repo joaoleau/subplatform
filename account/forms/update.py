@@ -5,6 +5,7 @@ User = get_user_model()
 
 
 class UpdateUserForm(UserChangeForm):
+
     class Meta:
         model = User
         fields = [

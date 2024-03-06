@@ -11,6 +11,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from .forms import RegisterForm, LoginForm, UpdateUserForm
 from django.urls import reverse_lazy
+from django.contrib.auth import views as auth_views
 
 User = get_user_model()
 
@@ -51,7 +52,7 @@ class LoginView(FormView):
 class RegisterView(FormView):
     form_class = RegisterForm
     template_name = "account/register.html"
-    success_url = reverse_lazy("account:login")
+    success_url = reverse_lazy("login")
     success_message = "Novo usuário <b>%(username)s</b> criado com sucesso."
 
     def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
@@ -118,3 +119,19 @@ class DeleteAccountView(LoginRequiredMixin, DeleteView):
         context = super().get_context_data(**kwargs)
         context["user"] = self.get_object()
         return context
+
+
+class PasswordResetView(auth_views.PasswordResetView):
+    template_name = "account/password-reset.html"
+
+
+class PasswordResetDoneView(auth_views.PasswordResetDoneView):
+    template_name = "account/password-reset-sent.html"
+
+
+class PasswordResetConfirmView(auth_views.PasswordResetConfirmView):
+    template_name = "account/password-reset-form.html"
+
+
+class PasswordResetCompleteView(auth_views.PasswordResetCompleteView):
+    template_name = "account/password-reset-complete.html"

@@ -96,4 +96,15 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-LOGIN_URL = "account:login"
+LOGIN_URL = "login"
+
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend" //Email aparecer no Console
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")  # - GMAIL email address
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")  # - APP password
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
