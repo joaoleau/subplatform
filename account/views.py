@@ -1,17 +1,24 @@
 from typing import Any
-from django.db.models.base import Model as Model
+from django.db.models.base import Model
 from django.db.models.query import QuerySet
 from django.http.request import HttpRequest
 from django.http.response import HttpResponse
 from django.shortcuts import redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth import get_user_model
-from django.views.generic import FormView, UpdateView, DeleteView
+from django.views.generic import FormView, UpdateView, DeleteView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from .forms import RegisterForm, LoginForm, UpdateUserForm
 from django.urls import reverse_lazy
 from django.contrib.auth import views as auth_views
+from django.contrib.sites.shortcuts import get_current_site
+from .token import user_tokenizer_generate
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.core.mail import send_mail
+
 
 User = get_user_model()
 
@@ -52,7 +59,7 @@ class LoginView(FormView):
 class RegisterView(FormView):
     form_class = RegisterForm
     template_name = "account/register.html"
-    success_url = reverse_lazy("login")
+    success_url = reverse_lazy("email-verification-sent")
     success_message = "Novo usuário <b>%(username)s</b> criado com sucesso."
 
     def get(self, request: HttpRequest, *args: str, **kwargs: Any) -> HttpResponse:
@@ -70,7 +77,29 @@ class RegisterView(FormView):
 
             if password2 == password2:
                 user.set_password(password1)
+                user.is_active = False
                 user.save()
+
+                # Email verification
+                current_site = get_current_site(request)
+                subject = "Activate your account"
+                message = render_to_string(
+                    "account/email-verification.html",
+                    {
+                        "user": user,
+                        "domain": current_site.domain,
+                        "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                        "token": user_tokenizer_generate.make_token(user),
+                    },
+                )
+                user_email = user.email
+                send_mail(
+                    subject=subject,
+                    message=message,
+                    from_email=None,
+                    recipient_list=[user_email],
+                )
+
                 return self.form_valid(form)
             else:
                 form.add_error("password", "Senhas diferentes.")
@@ -135,3 +164,30 @@ class PasswordResetConfirmView(auth_views.PasswordResetConfirmView):
 
 class PasswordResetCompleteView(auth_views.PasswordResetCompleteView):
     template_name = "account/password-reset-complete.html"
+
+
+class EmailVerificationView(View):
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        unique_token = force_str(urlsafe_base64_decode(self.kwargs["uidb64"]))
+        user = User.objects.get(pk=unique_token)
+
+        if user and user_tokenizer_generate.check_token(user, self.kwargs["token"]):
+            user.is_active = True
+            user.save()
+
+            return redirect("email-verification-success")
+
+        return redirect("email-verification-failed")
+
+
+class EmailVerificationSentView(TemplateView):
+    template_name = "account/email-verification-sent.html"
+
+
+class EmailVerificationSuccessView(TemplateView):
+    template_name = "account/email-verification-success.html"
+
+
+class EmailVerificationFailedView(TemplateView):
+    template_name = "account/email-verification-failed.html"
