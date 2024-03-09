@@ -17,7 +17,7 @@
 
     <div class="d-flex flex-wrap justify-content-center">
         {% for article in article_list %}
-        <div class="form-layout bg-white shadow-md p-5  text-center m-3">
+        <div class="form-layout bg-white shadow-md p-3  text-center m-3">
             <h3>{{article.title}}</h3>
             {{article.content|truncate_words:50 }}
             <br><br>
@@ -30,10 +30,8 @@
             {% endif %}
             <br><br>
             <a class="btn btn-success" href="{{ article.get_absolute_url }}">Read more</a>
-            <br><br>
-            <a href=" {% url 'article:article-update' article.id %}">Update</a>
-            |
-            <a href=" {% url 'article:article-delete' article.id %}">Delete</a>
+            <a class="btn btn-dark w-25" href=" {% url 'article:article-update' article.id %}">Update</a>
+            <a class="btn btn-outline-danger w-50 m-2" href=" {% url 'article:article-delete' article.id %}">Delete</a>
         </div>
         {% endfor %}
     </div>
