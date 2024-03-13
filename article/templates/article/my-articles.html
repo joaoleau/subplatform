@@ -1,0 +1,40 @@
+{% extends 'navbar.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="flex-container text-center p-5">
+    <h5>✍️ {{user.first_name}} | {{verbose_name_plural}} </h5>
+
+    <span class="pull-right">{{ object_list.count }}
+        {% if object_list.count == 1 %}
+        {{ verbose_name }}
+        {% else %}
+        {{ verbose_name_plural }}
+        {% endif %}</span>
+
+    <br><br>
+
+    <div class="d-flex flex-wrap justify-content-center">
+        {% for article in article_list %}
+        <div class="form-layout bg-white shadow-md p-3  text-center m-3">
+            <h3>{{article.title}}</h3>
+            {{article.content|truncate_words:50 }}
+            <br><br>
+            {{article.date_posted}}
+            <br><br>
+            {% if article.get_access_level == 'Premium' %}
+            ⭐️<strong>Premium</strong>
+            {% elif article.get_access_level == 'Standard' %}
+            <strong>Standard</strong>
+            {% endif %}
+            <br><br>
+            <a class="btn btn-success" href="{{ article.get_absolute_url }}">Read more</a>
+            <a class="btn btn-dark w-25" href=" {% url 'article:article-update' article.id %}">Update</a>
+            <a class="btn btn-outline-danger w-50 m-2" href=" {% url 'article:article-delete' article.id %}">Delete</a>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

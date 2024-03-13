@@ -1,6 +1,7 @@
 *venv/
 *.env
 *__pycache__/
+.pytest_cache
 .vscode/
 db.sqlite3
 *.yml
@@ -8,3 +9,5 @@ db.sqlite3
 *.png
 *.jpg
 *.jpeg
+anotations
+*_cache

@@ -8,7 +8,7 @@ SECRET_KEY = config("SECRET_KEY")
 
 DEBUG = bool(int(config("DEBUG")))
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -20,12 +20,14 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_bootstrap5",
     "account",
-    "client",
-    "writer",
+    "client.apps.ClientConfig",
+    "article",
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin-allow-popups"
 
 AUTH_USER_MODEL = "account.User"
 
@@ -44,7 +46,7 @@ ROOT_URLCONF = "subplatform.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -94,4 +96,15 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-LOGIN_URL = "account:login"
+LOGIN_URL = "login"
+
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend" //Email aparecer no Console
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")  # - GMAIL email address
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")  # - APP password
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")

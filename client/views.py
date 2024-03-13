@@ -1,61 +1,109 @@
-from django.db.models.query import QuerySet
-from django.http import HttpRequest, HttpResponse
-from django.views.generic import TemplateView, ListView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from writer.models import Article
 from typing import Any
-from django.contrib.auth import get_user_model
+from django.http import HttpRequest
 from django.shortcuts import redirect
+from django.http.response import HttpResponse
+from django.views.generic import TemplateView, View
 from .mixins import NotIsactiveSubscriptionPermissionMixin
-
-
-class DashboardView(LoginRequiredMixin, TemplateView):
-    template_name = "client/client-dashboard.html"
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth import get_user_model
+from .models import PlanModel
+from .paypal import (
+    get_access_token_paypal,
+    cancel_subscription_paypal,
+    update_subscription_paypal,
+    get_current_subscription,
+)
+from .services import ClientServices
 
 
 class SubscriptionLockedView(NotIsactiveSubscriptionPermissionMixin, TemplateView):
     template_name = "client/subscription-locked.html"
 
 
-class ListArticleView(LoginRequiredMixin, ListView):
-    template_name = "client/list-article.html"
-    context_object_name = "article_list"
-    model = Article
-
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        context.update(
-            {
-                "verbose_name": self.model._meta.verbose_name.title(),
-                "verbose_name_plural": self.model._meta.verbose_name_plural.title(),
-            }
-        )
-        return context
-
-    def get_user_request(self):
-        return get_user_model().objects.get(pk=self.request.user.id)
-
-    def get_redirect_subscription_locked(self):
-        return redirect("client:subscription-locked")
+class CreateSubscriptionView(LoginRequiredMixin, TemplateView):
+    model_user = get_user_model()
+    template_name = "client/create-subscription.html"
+    services = ClientServices()
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        user = self.get_user_request()
-        if not user.get_subscription():
-            return self.get_redirect_subscription_locked()
+        self.user_object = self.request.user
+
+        plan_name = self.kwargs.get("plan")
+
+        self.user_object.subscription.plan = self.services.get_plan(plan_name)
+        self.user_object.subscription.paypal_subscription_id = self.kwargs.get("subID")
+        self.user_object.subscription.save()
+
         return super().get(request, *args, **kwargs)
 
-    def get_queryset(self) -> QuerySet[Any] | None:
-        user = self.get_user_request()
 
-        if user.get_subscription():
-            plan, is_active = user.subscription.get_plan_and_is_active()
+class DeleteSubscription(LoginRequiredMixin, TemplateView):
+    access_token = get_access_token_paypal()
+    template_name = "client/delete-subscription.html"
+    services = ClientServices()
 
-            if is_active is False:
-                self.model.objects.none()
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        subID = kwargs.get("subID")
+        cancel_subscription_paypal(self.access_token, subID)
 
-            elif plan == "Standard":
-                return super().get_queryset().filter(is_premium=False)
+        user = self.request.user
+        user.subscription.plan = self.services.get_plan("Free")
+        user.subscription.save()
 
-            return super().get_queryset()
+        return super().get(request, *args, **kwargs)
 
-        return self.model.objects.none()
+
+class SubscriptionPlansView(LoginRequiredMixin, TemplateView):
+    template_name = "client/subscription-plans.html"
+    model = PlanModel
+
+
+class UpdateSubscription(LoginRequiredMixin, View):
+    services = ClientServices()
+    access_token = get_access_token_paypal()
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        subID = kwargs.get("subID")
+
+        approve_link = update_subscription_paypal(self.access_token, subID)
+
+        if approve_link:
+            return redirect(approve_link)
+
+        else:
+            return HttpResponse("Unable to obtain the approval link")
+
+
+class PaypalUpdateSubConfirmed(LoginRequiredMixin, TemplateView):
+    template_name = "client/paypal-update-sub-confirmed.html"
+    extra_context = None
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        sub = self.request.user.subscription
+        sub_id = sub.paypal_subscription_id
+        self.extra_context = {"subID": sub_id}
+        return super().get(request, *args, **kwargs)
+
+
+class DjangoUpdateSubConfirmed(LoginRequiredMixin, TemplateView):
+    template_name = "client/django-update-sub-confirmed.html"
+    access_token = get_access_token_paypal()
+    services = ClientServices()
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        subID = kwargs.get("subID")
+        self.user_object_with_subid = get_user_model().objects.get(
+            subscription__paypal_subscription_id=subID
+        )
+
+        current_plan_id = get_current_subscription(self.access_token, subID)
+
+        if current_plan_id == "P-79F92206JA736893VMXONXHI":
+            new_plan = self.services.get_plan("Standard")
+            self.user_object_with_subid.subscription.update(plan=new_plan)
+
+        elif current_plan_id == "P-37W71531BU030260RMXN7HKY":
+            new_plan = self.services.get_plan("Premium")
+            self.user_object_with_subid.subscription.update(plan=new_plan)
+
+        return super().get(request, *args, **kwargs)

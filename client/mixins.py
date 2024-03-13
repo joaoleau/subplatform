@@ -6,4 +6,11 @@ class NotIsactiveSubscriptionPermissionMixin(UserPassesTestMixin, LoginRequiredM
     permission_denied_message = _("Your account has been activated successfully.")
 
     def test_func(self) -> bool:
-        return not self.request.user.get_subscription()
+        return not self.request.user.is_sub()
+
+
+class SubscriptionPermissionMixin(UserPassesTestMixin, LoginRequiredMixin):
+    permission_denied_message = _("Restricted access to subscribers.")
+
+    def test_func(self) -> bool:
+        return self.request.user.is_sub()

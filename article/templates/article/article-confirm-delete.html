@@ -1,0 +1,25 @@
+{% extends 'navbar.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+<br><br>
+<div class="container text-center">
+    <h1>Delete Article</h1>
+    <br><br>
+    <div class="container bg-white p-5">
+        <h3>{{article.title}}</h3>
+        {{article.content|truncate_words:50}}
+        <br><br>
+        {{article.date_posted}}
+        <br>
+        ✍️ Author: {{ article.user.first_name }}
+        <br>
+        <br>
+        <form method="POST" autocomplete="off">
+            {% csrf_token %}
+            <input class="btn btn-danger" type="submit" value="Delete Article" />
+        </form>
+        <a href="{% url 'article:my-articles' %}">Return to articles</a>
+    </div>
+</div>
+{% endblock %}

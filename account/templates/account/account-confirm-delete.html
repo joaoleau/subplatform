@@ -1,4 +1,4 @@
-{% extends 'writer/navbar.html' %}
+{% extends 'navbar.html' %}
 {% load static %}
 {% load custom_filters %}
 {% block content %}
@@ -12,7 +12,7 @@
             {% csrf_token %}
             <input class="btn btn-danger" type="submit" value="Delete" />
         </form>
-        <a href="{% url 'account:home' %}">Return to home</a>
+        <a href="{% url 'home' %}">Return to home</a>
     </div>
 </div>
 {% endblock %}
