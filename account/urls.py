@@ -5,15 +5,13 @@ from .views import (
     LogoutView,
     AccountManagement,
     DeleteAccountView,
-    PasswordResetView,
-    PasswordResetDoneView,
-    PasswordResetConfirmView,
-    PasswordResetCompleteView,
     EmailVerificationFailedView,
     EmailVerificationSentView,
     EmailVerificationSuccessView,
     EmailVerificationView,
 )
+from django.contrib.auth import views as auth_views
+
 
 urlpatterns = [
     path("login/", LoginView.as_view(), name="login"),
@@ -23,27 +21,39 @@ urlpatterns = [
     path("delete/", DeleteAccountView.as_view(), name="account-delete"),
 ]
 
-#Password urls
+# Password urls
 urlpatterns += [
-    path("reset/password/", PasswordResetView.as_view(), name="reset_password"),
     path(
-        "reset/password/done/",
-        PasswordResetDoneView.as_view(),
+        "reset_password",
+        auth_views.PasswordResetView.as_view(
+            template_name="account/password-reset.html"
+        ),
+        name="reset_password",
+    ),
+    path(
+        "reset_password_sent",
+        auth_views.PasswordResetDoneView.as_view(
+            template_name="account/password-reset-sent.html"
+        ),
         name="password_reset_done",
     ),
     path(
         "reset/<uidb64>/<token>/",
-        PasswordResetConfirmView.as_view(),
+        auth_views.PasswordResetConfirmView.as_view(
+            template_name="account/password-reset-form.html"
+        ),
         name="password_reset_confirm",
     ),
     path(
-        "reset/password/complete/",
-        PasswordResetCompleteView.as_view(),
+        "password_reset_complete",
+        auth_views.PasswordResetCompleteView.as_view(
+            template_name="account/password-reset-complete.html"
+        ),
         name="password_reset_complete",
     ),
 ]
 
-#Email urls
+# Email urls
 urlpatterns += [
     path(
         "email/verification/<str:uidb64>/<str:token>/",

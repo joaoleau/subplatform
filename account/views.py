@@ -11,7 +11,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from .forms import RegisterForm, LoginForm, UpdateUserForm
 from django.urls import reverse_lazy
-from django.contrib.auth import views as auth_views
 from django.contrib.sites.shortcuts import get_current_site
 from .token import user_tokenizer_generate
 from django.template.loader import render_to_string
@@ -148,22 +147,6 @@ class DeleteAccountView(LoginRequiredMixin, DeleteView):
         context = super().get_context_data(**kwargs)
         context["user"] = self.get_object()
         return context
-
-
-class PasswordResetView(auth_views.PasswordResetView):
-    template_name = "account/password-reset.html"
-
-
-class PasswordResetDoneView(auth_views.PasswordResetDoneView):
-    template_name = "account/password-reset-sent.html"
-
-
-class PasswordResetConfirmView(auth_views.PasswordResetConfirmView):
-    template_name = "account/password-reset-form.html"
-
-
-class PasswordResetCompleteView(auth_views.PasswordResetCompleteView):
-    template_name = "account/password-reset-complete.html"
 
 
 class EmailVerificationView(View):
