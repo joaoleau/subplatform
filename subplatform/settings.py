@@ -1,5 +1,6 @@
 from decouple import config
 from pathlib import Path
+import dj_database_url
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -61,11 +62,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "subplatform.wsgi.application"
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": config("DATABASE_ENGINE"),
+#         "NAME": config("DATABASE_NAME"),
+#     }
+# }
+
 DATABASES = {
-    "default": {
-        "ENGINE": config("DATABASE_ENGINE"),
-        "NAME": config("DATABASE_NAME"),
-    }
+    "default": dj_database_url.parse(config("DATABASE_URL"))
 }
 
 AUTH_PASSWORD_VALIDATORS = [
