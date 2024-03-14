@@ -174,3 +174,8 @@ class EmailVerificationSuccessView(TemplateView):
 
 class EmailVerificationFailedView(TemplateView):
     template_name = "account/email-verification-failed.html"
+
+
+class ChangePasswordView(View):
+        def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+            return redirect("reset_password")

@@ -9,6 +9,7 @@ from .views import (
     EmailVerificationSentView,
     EmailVerificationSuccessView,
     EmailVerificationView,
+    ChangePasswordView
 )
 from django.contrib.auth import views as auth_views
 
@@ -23,6 +24,11 @@ urlpatterns = [
 
 # Password urls
 urlpatterns += [
+    path(
+        "<int:pk>/password/",
+        ChangePasswordView.as_view(),
+        name="change_password",
+    ),
     path(
         "reset_password",
         auth_views.PasswordResetView.as_view(
