@@ -1,7 +1,7 @@
 
 # Edenthought | Subplatform
 
-Edenthought é uma plataforma de artigos com assinaturas feito em Django, um projeto FullStack. Esta aplicação foi desenvolvida inspirada no projeto do curso "Python Django: Build a Subscription Platform - 2024" desenvolvido por Arno.
+Subplatform, também conhecida como Edenthought, é uma plataforma de artigos com assinaturas feita em Django, como um projeto Full Stack. Esta aplicação foi desenvolvida inspirada no projeto do curso "Python Django: Build a Subscription Platform - 2024", criado por Arno.
 
 - Deploy no Render: [Edenthought | Subplatform](https://subplatform.onrender.com)
 
@@ -92,7 +92,7 @@ Faça os devidos ajustes no arquivo ".env-example" e depois altere seu nome para
 
 ## Aprendizados
 
-Com a elaboração deste projeto além de fortificar meus conhecimento em Python e Django, pude também praticar outras ferramentas como Javascript e HTML. Além disso, pude aprender a integrar minha aplicação com API Rest, neste caso a do PayPal para pagamentos. E diferente de outros projetos prórpios, este resolvi mudar e encarei uma aplicação FullStak, e foi incrível, dessa vez explorei ainda mais o que o Django é capaz de proporcionar.
+Com a elaboração deste projeto, além de fortalecer meus conhecimentos em Python e Django, pude aprender a integrar minha aplicação com a API Rest do PayPal para pagamentos. Diferente de outros projetos próprios, decidi mudar e encarei uma aplicação Full Stack, explorando ainda mais o que o Django é capaz de proporcionar.
 
 Este projeto foi realizado em conjunto com o curso já citado, porém ainda foram feitas alterações de minha autoria, como a adaptação para o uso de Class-Based-Views.
 
