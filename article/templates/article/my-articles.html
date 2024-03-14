@@ -29,9 +29,11 @@
             <strong>Standard</strong>
             {% endif %}
             <br><br>
-            <a class="btn btn-success" href="{{ article.get_absolute_url }}">Read more</a>
-            <a class="btn btn-dark w-25" href=" {% url 'article:article-update' article.id %}">Update</a>
-            <a class="btn btn-outline-danger w-50 m-2" href=" {% url 'article:article-delete' article.id %}">Delete</a>
+            <div class="justify-content-center">
+                <a class="btn btn-success" href="{{ article.get_absolute_url }}">Read more</a>
+                <a class="btn btn-dark" href=" {% url 'article:article-update' article.id %}">Update</a>
+                <a class="btn btn-outline-danger" href=" {% url 'article:article-delete' article.id %}">Delete</a>
+            </div>
         </div>
         {% endfor %}
     </div>
