@@ -27,9 +27,12 @@
             {% if article.get_access_level == 'Premium' %}
             ⭐️<strong>Premium</strong>
             {% elif article.get_access_level == 'Standard' %}
-            <strong>Standard</strong>
+            🌀<strong>Standard</strong>
+            {% elif article.get_access_level == 'Free' %}
+            🌐<strong>Free</strong>
+            {% elif article.get_access_level == 'Private' %}
+            👤<strong>Private</strong>
             {% endif %}
-            <br><br>
             <a class="btn btn-success" href="{{ article.get_absolute_url }}">Read more</a>
         </div>
         {% endfor %}

@@ -3,6 +3,12 @@
 {% load crispy_forms_tags %}
 {% block content %}
 <br><br>
+{% if not user.is_sub %}
+    <div class="container bg-danger-subtle shadow-md p-4 form-layout text-center">
+        <strong>{{user}} can only create articles for free or private use. Your plan ({{ user.subscription }}) </strong>
+    </div>
+{% endif %}
+<br>
 <div class="container text-center">
     <h1>Create Article</h1>
     <br>
