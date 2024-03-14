@@ -9,7 +9,7 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
 )
-from .mixins import AuthorPermissionMixin
+from .mixins import AuthorPermissionMixin, DetailPermissionMixin
 from .forms import ArticleForm
 from .models import Article
 from django.urls import reverse_lazy
@@ -27,6 +27,10 @@ class CreateArticleView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         self.object = form.save(commit=False)
         self.object.user = self.request.user
+
+        if (not self.request.user.is_sub()) and (self.object.access_level not in ["Free", "Private"]):
+            return redirect("client:subscription-plans")
+
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())
 
@@ -59,6 +63,16 @@ class UpdateArticleView(AuthorPermissionMixin, UpdateView):
     pk_url_kwarg = "pk"
 
 
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+
+        if (not self.request.user.is_sub()) and (self.object.access_level not in ["Free", "Private"]):
+            return redirect("client:subscription-plans")
+
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+
 class DeleteArticleView(AuthorPermissionMixin, DeleteView):
     model = Article
     pk_url_kwarg = "pk"
@@ -71,7 +85,7 @@ class DeleteArticleView(AuthorPermissionMixin, DeleteView):
         return context
 
 
-class DetailArticleView(LoginRequiredMixin, DetailView):
+class DetailArticleView(DetailPermissionMixin, DetailView):
     template_name = "article/article-detail.html"
     model = Article
     context_object_name = "article"
