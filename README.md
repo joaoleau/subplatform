@@ -25,7 +25,7 @@ Edenthought é uma plataforma de artigos com assinaturas feito em Django, um pro
 
 ## Demonstração
 
-*Em breve
+<img src="assets/LoginRegister-Gif.gif">
 
 
 ## Rodando localmente
