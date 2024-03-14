@@ -17,7 +17,7 @@
 
     <div class="d-flex flex-wrap justify-content-center">
         {% for article in article_list %}
-        <div class="form-layout bg-white shadow-md p-3  text-center m-3">
+        <div class="form-layout bg-white shadow-md p-5  text-center m-3">
             <h3>{{article.title}}</h3>
             {{article.content|truncate_words:50 }}
             <br><br>
