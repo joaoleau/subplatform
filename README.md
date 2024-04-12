@@ -21,9 +21,10 @@ Subplatform, também conhecida como Edenthought, é uma plataforma de artigos co
 
 ## Observações
 
-- O projeto foi fortemente inspirado ao do curso, porém foram feitas alterações para tornar o código escalavel.
+- O pagamento é realizdo através duma conta PayPal SandBox, que pode ser criada através do PayPal Developer!!
+- O projeto foi inspirado ao do curso, porém há alterações.
 - Vale ressaltar que os pagamentos não são reais! É apenas para um ambiente de desenvolvimento e aprendizado.
-- Para rodar o projeto é preciso criar um app no ambiente de desenvolvimento do PayPal e fazer as devidas configurações no arquivo ".env"!
+- Para rodar o projeto com sua configuração de pagamentos é preciso criar um app no ambiente de desenvolvimento do PayPal e fazer as devidas configurações no arquivo ".env"!
 
 
 ## Demonstração
